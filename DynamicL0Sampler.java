@@ -1,7 +1,8 @@
 // DynamicL0Sampler.java
 // COMP90056 2018s2
 // Assignment B
-// William Holland
+// By Lu Chen, Student Number: 883241
+// Based on William Holland's code
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,13 +10,13 @@ import java.util.Set;
 
 
 public class DynamicL0Sampler implements Sampler<Integer> {
-    // you may need to add additional class attributes
 
     // length of vector support
     private int n;
     
     private int p=1073741719;
     
+    //We set the max subset number with 30 because p < 2^30
     private final int MAXROW = 30;
 
     private int sparsity=40;
@@ -28,9 +29,10 @@ public class DynamicL0Sampler implements Sampler<Integer> {
 
     public DynamicL0Sampler(int n) {
         this.n = n;
-        //Initiate the hash function, range is 2^30+1 (we can see it as 2^30)
-        hash = new Hash(p);
+        //Initiate the hash function, range is same as p.
+        hash = new Hash(p,(sparsity/2));
         recovery = new SSparseRec[MAXROW];
+        //Initialize subsets. Subsets are built on S-Sparse vector.
         for(int i=0; i<MAXROW;i++){
             recovery[i] = new SSparseRec(4,sparsity);
         }
@@ -38,10 +40,6 @@ public class DynamicL0Sampler implements Sampler<Integer> {
     }
 
     public void add(Integer index, int value) {
-        //The value is not important in l0-sampler. In order to avoid negative frequency, we transfer them into a dense structure
-        value = Math.abs(value)+1;
-        //Add this pair into each SSparseRec
-        //First check the hash value of this pair
         int hashValue = hash.hash(index);
         for(int i=0; i< MAXROW; i++){
             //Then check if it belongs to the smallest 2^(30-i) items

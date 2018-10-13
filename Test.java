@@ -11,13 +11,13 @@ import java.io.*;
 public class Test {
 
 	private final static String[] files = {
-	        "dinner.txt"
+	        //"dinner-4.txt"
 			//"oneSparseTrue1.txt",
 			//"oneSparseTrue2.txt",
             //"oneSparseFalse1.txt",
             //"oneSparseTrue2.txt",
-	        //"oneSparseMore.txt"
-	        //"sSparseRecover.txt"
+	        "oneSparseZero.txt"
+	        //"sSparseS-1.txt"
 	    };
             //"sSparseTrue.txt" ,
             //"sSparseFalse.txt",
@@ -71,7 +71,7 @@ public class Test {
 
                         sparse.add(index, value);
                     }
-                    System.out.println(sparse.sparseRecTest());
+                    System.out.println(sparse.sSparseTest());
 
                     scan.close();
                 } catch (FileNotFoundException e) {
@@ -105,7 +105,7 @@ public class Test {
 //                    
 //                }
 //                for(int i=0; i< frequency.length; i++){
-//                    frequency[i] /= 5050;
+//                    frequency[i] /= testNum;
 //                }
 //                StdStats.plotBars(frequency);
                 
@@ -137,13 +137,13 @@ public class Test {
                     
                 }
                 for(int i=0; i< frequency.length; i++){
-                    frequency[i] /= 1000;
+                    frequency[i] /= 10000;
                 }
                 StdStats.plotBars(frequency);
                 
 		        System.out.println(isUniform(isamp, file));
 		        System.out.println(isUniform(dsamp, file));
-            }
+           }
 
 	}
 

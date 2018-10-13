@@ -1,38 +1,39 @@
 // SSparseRec.java
 // COMP90056 2018s2
 // Assignment B
-// William Holland
+// By Lu Chen, Student Number: 883241
+// Based on William Holland's code
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class SSparseRec {
-    //"zero" means |T| = 0, "isSSparse" means 1<=|T|<=S, "more" means |T| > S
+    //flag will be assigned with three values: "zero" means |T| = 0, "isSSparse" means 1<=|T|<=S, "more" means |T| > S
     private String flag= "";
     private int SSparseColumn = -1;
 
     private int r, s;
 
-    // selected from pairwise independent family of hash functions
+    // selected from universal hash functions
     private Hash[] hashFamily;
     private OneSparseRec[][] net;
 
     public SSparseRec(int r, int sparsity){
-        //We need to have altogether r hash functions. Each hash function is to project items into 2s buckets
+        //We need to have altogether r hash functions for r columns. Each hash function is to project items into 2s buckets
         this.r = r;
         this.s = sparsity;
         initialise();
     }
 
     private void initialise() {
-        //range of the hash function is 2s
+        //range of the hash function is 2*s
         hashFamily = new Hash[r];
         //Initialize the hash functions
         for(int i=0; i< hashFamily.length; i++){
-            hashFamily[i] = new Hash(2*s);
+            hashFamily[i] = new Hash(2*s,2);
         }
-        //Initialze buckets
+        //Initialize the buckets
         net = new OneSparseRec[2*s][r];
         for(int i=0; i<2*s; i++){
             for(int j=0; j<r; j++){
@@ -42,7 +43,7 @@ public class SSparseRec {
     }
 
     public void add(int index, int value) {
-       //Every time you add a pair. this item will be added to one bucket in each column.
+       //Every time you add a pair, this item will be added to one bucket in each column.
         for (int j=0; j< hashFamily.length; j++){
             //Calculate the hash value
             int bucketNum = hashFamily[j].hash(index);
@@ -58,7 +59,9 @@ public class SSparseRec {
             int countOne = 0;
             int countMultiple = 0;
             for(int j=0; j< 2*s; j++){
-                if(net[j][i].oneSparseTest().equals("zero")) countZero++;
+                if(net[j][i].oneSparseTest().equals("zero")){
+                    countZero++;
+                }
                 else if(net[j][i].isOneSparse()){
                     countOne++;
                 }
@@ -67,16 +70,16 @@ public class SSparseRec {
                     break;
                 }
             }
-            //Check if it is the sparsest distribution
+            
+            //Identify the vector and assign the flag
             String currFlag = "";
-            if(countMultiple > 0) currFlag = "more";
-            else if(countOne > s) currFlag = "more";
+            if(countMultiple > 0 || countOne > s) currFlag = "more";
             else if(countOne <= s && countOne > 0){
                 currFlag = "isSSparse";
             }
             else currFlag = "zero";
             
-            //Compare
+            //Compare with the previously assigned flag
             if(flag.equals("")) {
                 flag = currFlag;
                 if(flag.equals("isSSparse")){
@@ -107,7 +110,7 @@ public class SSparseRec {
         return false;
     }
     
-    public String sparseRecTest() {
+    public String sSparseTest() {
         writeFlag();
         if(flag.equals("zero")){
             return "zero";
@@ -127,11 +130,12 @@ public class SSparseRec {
         }
     }
 
-    
+    //This method will randomly select a non-zero frequency item from the s-sparse vector.
+    //This method is designed for DynamicL0Samler Class.
     public int randomSelect(){
         int columnIndex = SSparseColumn;
         //System.out.println(columnIndex);
-        Hash newHash = new Hash(2*s);
+        Hash newHash = new Hash(2*s,2);
         int smallestIndex = -1;
         int smallestHashedValue = -1;
         for(int i=0; i< 2*s; i++){
@@ -146,12 +150,10 @@ public class SSparseRec {
                 
             }
         }
-        //System.out.println(smallestIndex);
-        //System.out.println(smallestHashedValue);
         return smallestIndex;
     }
     
-    // Only when the flag is isSSparse
+    // Only when the flag is isSSparse can invoke this method. This method will return all non-zero frequency item pairs.
     public HashMap<Integer, Integer> recover(){
         int column = SSparseColumn;
         HashMap<Integer,Integer> resultMap = new HashMap<Integer,Integer>();

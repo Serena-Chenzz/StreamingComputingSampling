@@ -1,7 +1,8 @@
 // OneSparseRec.java
 // COMP90056 2018s2
 // Assignment B
-// William Holland
+// By Lu Chen, Student Number: 883241
+// Based on William Holland's code
 
 public class OneSparseRec {
     //To sum up the square of frequencies.
@@ -11,12 +12,10 @@ public class OneSparseRec {
     private int tau;
     // Here we can choose a large p
     private int p = 1073741789; //smaller than 2^30
-    //We can use a hash function to select a q
     private int q;
-    // there are more attributes...
-    // fill in 
 
     public OneSparseRec() {
+       //q is a random value between 1 and p
        q = StdRandom.uniform(p+1);
     }
 
@@ -32,13 +31,13 @@ public class OneSparseRec {
         if(phi == 0 && V==0){
             return false;
         }
-        // If iota % phi !=0, it means there are at least two non-frequency items in the stream.
+        // If iota % phi !=0 (iota cannot be divided by phi), it means there are at least two non-frequency items in the stream.
         else if(iota%phi != 0){
             return false;
         }
         else{
-            //If targetSum == tau, it's highly possible there is only one non-frequency item in the stream.
             int targetSum = (int)phi * ((int)Math.pow(q, iota/phi) % p) %p;
+            //If targetSum == tau, it's highly possible there is only one non-frequency item in the stream.
             if (targetSum == tau){
                 return true;
             }
@@ -48,6 +47,7 @@ public class OneSparseRec {
 
     public String oneSparseTest() {
         if (isOneSparse()){
+            // Return the pair
             return iota/phi + " " + phi;
         }
         else if(phi == 0 && V==0){
